@@ -1,0 +1,83 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <title>Success</title>
+</head>
+<body>
+    <div class="container">
+        <a href="/logout">Logout</a>
+        <h1>Success! Welcome, {{user.first_name}}!</h1>
+        <div class="alert alert-success" role="alert">
+            You have successfully registered (or logged in)!
+        </div>
+
+
+        <div class="messages">
+            <form action="/post_message" method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label>Post a message:</label>
+                    <textarea class="form-control" rows="3" name="message"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Post Message</button>
+            </form>
+        </div>
+
+
+        {% for post in wall_messages  reversed%}
+        <div class="container mt-4 mb-5">
+            <div class="d-flex justify-content-center row">
+                <div class="col-md-8">
+                    <div class="feed p-2">
+                        <div class="card feed-card">
+                            <div class="card-header">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        
+                                        <div class="mr-2">
+                                            <img class="rounded-circle" width="45" src="https://picsum.photos/50/50" alt="profile">
+                                        </div>
+                                        <div class="ml-2">
+                                            <div class="h5 m-0"><a href="/user_profile/{{post.poster.id}}">{{post.poster.first_name}} {{post.poster.last_name}}</a></div>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                    
+                            </div>
+                            <div class="card-body">
+                                <p class="card-title">{{post.message}}</p>
+                            </div>
+                            <div class="card-footer">
+                                <div class="like row">
+                                    <a href="/like/{{post.id}}">Like</a>
+                                    <p class="mx-2">{{post.likes.count}}</p>
+                                </div>
+                                <form action="/add_comment/{{post.id}}" method="POST">
+                                    {% csrf_token %}
+                                    <div class="form-group d-flex">
+                                        <input type="text" class="form-control" name="comment" placeholder="Leave a Comment">
+                                        <button type="submit" class="btn btn-primary ml-1">Comment</button>
+                                    </div>
+                                </form>
+                                {% for comment in post.post_comments.all reversed%}
+                                <div class="comments-list bg-white p-2 my-2">
+                                    <p>{{comment.comment}}</p>
+                                    <p>Posted By: <a href="/user_profile/{{post.poster.id}}">{{comment.poster.first_name}} {{comment.poster.last_name}}</a></p>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</body>
+</html>
